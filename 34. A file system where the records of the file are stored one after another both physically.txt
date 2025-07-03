@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    char name[50];
+} Record;
+
+void writeRecordsToFile(const char *filename, Record *records, int count) {
+    FILE *file = fopen(filename, "wb");
+    if (file == NULL) {
+        perror("Error opening file");
+        return;
+    }
+    fwrite(records, sizeof(Record), count, file);
+    fclose(file);
+}
+
+void readRecordsFromFile(const char *filename) {
+    FILE *file = fopen(filename, "rb");
+    if (file == NULL) {
+        perror("Error opening file");
+        return;
+    }
+    
+    Record record;
+    while (fread(&record, sizeof(Record), 1, file)) {
+        printf("ID: %d, Name: %s\n", record.id, record.name);
+    }
+    fclose(file);
+}
+
+int main() {
+    Record records[3] = {
+        {1, "Alice"},
+        {2, "Bob"},
+        {3, "Charlie"}
+    };
+
+    const char *filename = "records.dat";
+    writeRecordsToFile(filename, records, 3);
+    readRecordsFromFile(filename);
+
+    return 0;
+}

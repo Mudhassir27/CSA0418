@@ -1,0 +1,87 @@
+#include <stdio.h>
+
+#define MAX 100
+
+void cs_scan(int arr[], int head, int size, int direction) {
+    int seek_sequence[MAX], distance, seek_count = 0, cur_track;
+    int start = 0, end = size - 1;
+
+    // Sort the request array
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+
+    // Find the position of the head
+    for (int i = 0; i < size; i++) {
+        if (head < arr[i]) {
+            start = i;
+            break;
+        }
+    }
+
+    // Moving towards the end
+    if (direction == 1) {
+        for (int i = start; i < size; i++) {
+            cur_track = arr[i];
+            distance = cur_track - head;
+            seek_count += distance;
+            head = cur_track;
+            seek_sequence[i] = cur_track;
+        }
+        // Jump to the end and move to the beginning
+        seek_count += (arr[size - 1] - head);
+        head = 0;
+        seek_count += arr[size - 1];
+        for (int i = 0; i <= start - 1; i++) {
+            cur_track = arr[i];
+            distance = cur_track - head;
+            seek_count += distance;
+            head = cur_track;
+            seek_sequence[i] = cur_track;
+        }
+    } 
+    // Moving towards the beginning
+    else {
+        for (int i = start - 1; i >= 0; i--) {
+            cur_track = arr[i];
+            distance = head - cur_track;
+            seek_count += distance;
+            head = cur_track;
+            seek_sequence[i] = cur_track;
+        }
+        // Jump to the beginning and move to the end
+        seek_count += head;
+        head = arr[0];
+        seek_count += (arr[size - 1] - head);
+        for (int i = 0; i < size; i++) {
+            cur_track = arr[i];
+            distance = cur_track - head;
+            seek_count += distance;
+            head = cur_track;
+            seek_sequence[i] = cur_track;
+        }
+    }
+
+    printf("Total seek time: %d\n", seek_count);
+    printf("Seek Sequence: ");
+    for (int i = 0; i < size; i++) {
+        printf("%d ", seek_sequence[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = { 176, 79, 34, 60, 92, 11, 41, 114 };
+    int head = 50;
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int direction = 1; // 1 for right, 0 for left
+
+    cs_scan(arr, head, size, direction);
+    return 0;
+}

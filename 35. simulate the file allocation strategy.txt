@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_FILES 10
+#define BLOCK_SIZE 512
+
+typedef struct {
+    int blockNumber;
+    char data[BLOCK_SIZE];
+} Block;
+
+typedef struct {
+    Block blocks[MAX_FILES];
+    int index[MAX_FILES];
+    int fileCount;
+} FileSystem;
+
+void initializeFileSystem(FileSystem *fs) {
+    fs->fileCount = 0;
+    for (int i = 0; i < MAX_FILES; i++) {
+        fs->index[i] = -1;
+    }
+}
+
+void allocateFile(FileSystem *fs, const char *data) {
+    if (fs->fileCount < MAX_FILES) {
+        fs->blocks[fs->fileCount].blockNumber = fs->fileCount;
+        snprintf(fs->blocks[fs->fileCount].data, BLOCK_SIZE, "%s", data);
+        fs->index[fs->fileCount] = fs->fileCount;
+        fs->fileCount++;
+    } else {
+        printf("File system is full.\n");
+    }
+}
+
+void displayFileSystem(FileSystem *fs) {
+    for (int i = 0; i < fs->fileCount; i++) {
+        printf("File %d: %s\n", fs->index[i], fs->blocks[i].data);
+    }
+}
+
+int main() {
+    FileSystem fs;
+    initializeFileSystem(&fs);
+    
+    allocateFile(&fs, "File 1 Data");
+    allocateFile(&fs, "File 2 Data");
+    allocateFile(&fs, "File 3 Data");
+    
+    displayFileSystem(&fs);
+    
+    return 0;
+}

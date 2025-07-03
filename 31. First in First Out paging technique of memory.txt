@@ -1,0 +1,47 @@
+#include <stdio.h>
+
+#define FRAME_SIZE 3
+#define PAGE_SIZE 10
+
+void fifo(int pages[], int n) {
+    int frame[FRAME_SIZE], pageFaults = 0, k = 0, i, j, flag;
+
+    for (i = 0; i < FRAME_SIZE; i++) {
+        frame[i] = -1; // Initialize frames
+    }
+
+    for (i = 0; i < n; i++) {
+        flag = 0;
+
+        for (j = 0; j < FRAME_SIZE; j++) {
+            if (frame[j] == pages[i]) {
+                flag = 1; // Page hit
+                break;
+            }
+        }
+
+        if (flag == 0) {
+            frame[k] = pages[i]; // Replace the page
+            k = (k + 1) % FRAME_SIZE; // Move to the next frame
+            pageFaults++;
+        }
+
+        printf("Frames: ");
+        for (j = 0; j < FRAME_SIZE; j++) {
+            if (frame[j] != -1) {
+                printf("%d ", frame[j]);
+            }
+        }
+        printf("\n");
+    }
+
+    printf("Total Page Faults: %d\n", pageFaults);
+}
+
+int main() {
+    int pages[PAGE_SIZE] = {0, 1, 2, 0, 3, 0, 4, 2, 3, 0};
+    int n = sizeof(pages) / sizeof(pages[0]);
+
+    fifo(pages, n);
+    return 0;
+}
